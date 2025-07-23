@@ -27,6 +27,8 @@ function mainUserListApp() {
       cardBody: 'card-body',
       cardMainInfo: 'card-main-info',
       cardAdress: 'card-address',
+      cardFooter: 'card-footer',
+      deleteBtn: 'delete-btn',
     };
 
     const selectors = {
@@ -34,11 +36,13 @@ function mainUserListApp() {
       container: `.${classes.container}`,
       title: `.${classes.title}`,
       userList: `.${classes.userList}`,
-      userCard: `${classes.userCard}`,
-      cardHeader: `${classes.cardHeader}`,
-      cardBody: `${classes.cardBody},`,
-      cardMainInfo: `${classes.cardMainInfo}`,
-      cardAdress: `${classes.cardAdress}`,
+      userCard: `.${classes.userCard}`,
+      cardHeader: `.${classes.cardHeader}`,
+      cardBody: `.${classes.cardBody},`,
+      cardMainInfo: `.${classes.cardMainInfo}`,
+      cardAdress: `.${classes.cardAdress}`,
+      cardFooter: `.${classes.cardFooter}`,
+      deleteBtn: `.${classes.deleteBtn}`,
       appendLocation: '.ins-api-users',
     };
 
@@ -59,6 +63,7 @@ function mainUserListApp() {
     self.reset = () => {
       $(selectors.style).remove();
       $(selectors.container).remove();
+      $(document).off('.userDeleteEvent');
     };
 
     self.buildCSS = () => {
@@ -78,7 +83,12 @@ function mainUserListApp() {
       $(selectors.appendLocation).prepend(html);
     };
 
-    self.setEvents = () => {};
+    self.setEvents = () => {
+      $(document).on(`click.userDeleteEvent`, selectors.deleteBtn, function () {
+        const $id = Number($(this).data('id'));
+        self.deleteUser($id);
+      });
+    };
 
     //localde varsa getir. yoksa apiden çek
     self.checkAndLoadData = () => {
@@ -106,6 +116,8 @@ function mainUserListApp() {
 
     //parametre olarak gelen user datasıyla card oluştur
     self.renderList = (users) => {
+      const $oldList = $(`${selectors.userList}`);
+      $oldList.remove();
       const $container = $(selectors.container);
       const $userList = $(`<div class="${classes.userList}"></div>`);
 
@@ -132,10 +144,28 @@ function mainUserListApp() {
         $cardBody.append($cardAddress);
 
         $card.append($cardBody);
+
+        const $cardFooter = $(`<div class=${classes.cardFooter}></div>`);
+        $cardFooter.append(
+          `<button class=${classes.deleteBtn} data-id=${user.id}>Delete</button>`
+        );
+        $card.append($cardFooter);
+
         $userList.append($card);
       });
 
       $container.append($userList);
+    };
+
+    self.deleteUser = (id) => {
+      let $users = self.getFromStorage();
+
+      if (!$users) return;
+
+      $users = $users.filter((item) => item.id !== id);
+
+      self.saveToStorage($users);
+      self.renderList($users);
     };
 
     //LOCALSTORAGE İŞLEMLERİ
