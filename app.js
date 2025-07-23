@@ -1,43 +1,59 @@
-/* eslint-disable */
-(($) => {
-  'use strict';
+//eğer sayfada jQuery yoksa CDN'den ekle
+(function () {
+  if (typeof window.jQuery === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://code.jquery.com/jquery-3.7.1.min.js';
+    script.onload = function () {
+      mainUserListApp();
+    };
+    document.head.appendChild(script);
+  } else {
+    mainUserListApp();
+  }
+})();
 
-  const classes = {
-    style: 'userlist-style',
-  };
+function mainUserListApp() {
+  /* eslint-disable */
+  (($) => {
+    'use strict';
 
-  const selectors = {
-    style: `.${classes.style}`,
-    appendLocation: '.ins-api-users',
-  };
+    const classes = {
+      style: 'userlist-style',
+    };
 
-  const self = {};
+    const selectors = {
+      style: `.${classes.style}`,
+      appendLocation: '.ins-api-users',
+    };
 
-  self.init = () => {
-    self.reset();
-    self.buildCSS();
-    self.buildHTML();
-    self.setEvents();
-  };
+    const self = {};
 
-  self.reset = () => {
-    $(selectors.style).remove();
-  };
+    self.init = () => {
+      self.reset();
+      self.buildCSS();
+      self.buildHTML();
+      self.setEvents();
+    };
 
-  self.buildCSS = () => {
-    const customStyle = `
-            <style class="${classes.style}">
-            </style>
-        `;
-    $('head').append(customStyle);
-  };
+    self.reset = () => {
+      $(selectors.style).remove();
+    };
 
-  self.buildHTML = () => {
-    const html = ``;
-    $(selectors.appendLocation).append(html);
-  };
+    self.buildCSS = () => {
+      const customStyle = `
+              <style class="${classes.style}">
+              </style>
+          `;
+      $('head').append(customStyle);
+    };
 
-  self.setEvents = () => {};
+    self.buildHTML = () => {
+      const html = ``;
+      $(selectors.appendLocation).append(html);
+    };
 
-  $(document).ready(self.init);
-})(jQuery);
+    self.setEvents = () => {};
+
+    $(document).ready(self.init);
+  })(jQuery);
+}
