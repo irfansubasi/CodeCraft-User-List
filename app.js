@@ -32,12 +32,17 @@ function mainUserListApp() {
       appendLocation: '.ins-api-users',
     };
 
+    const API_URL = 'https://jsonplaceholder.typicode.com/users';
+    const STORAGE_KEY = 'userListData';
+    const CACHE_DURATION = 15 * 1000; //BURAYI 1 GÜNE DEĞİŞTİRMEYİ UNUTMAAAA!!!!
+
     const self = {};
 
     self.init = () => {
       self.reset();
       self.buildCSS();
       self.buildHTML();
+      self.fetchUsers();
       self.setEvents();
     };
 
@@ -65,6 +70,30 @@ function mainUserListApp() {
     };
 
     self.setEvents = () => {};
+
+    //api fetch
+    self.fetchUsers = () => {
+      fetch(API_URL)
+        .then((respond) => {
+          if (!respond.ok) throw new Error('API respond failed');
+          return respond.json();
+        })
+        .then((data) => {
+          self.saveToStorage(data);
+        })
+        .catch((err) => {
+          console.error('api error: ', err);
+        });
+    };
+
+    //locale kaydetme
+    self.saveToStorage = (data) => {
+      const toStore = {
+        users: data,
+        exp: Date.now(),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+    };
 
     $(document).ready(self.init);
   })(jQuery);
