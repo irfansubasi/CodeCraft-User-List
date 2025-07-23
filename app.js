@@ -48,7 +48,7 @@ function mainUserListApp() {
 
     const API_URL = 'https://jsonplaceholder.typicode.com/users';
     const STORAGE_KEY = 'userListData';
-    const CACHE_DURATION = 15 * 1000; //BURAYI 1 GÜNE DEĞİŞTİRMEYİ UNUTMAAAA!!!!
+    const CACHE_DURATION = 5 * 1000; //BURAYI 1 GÜNE DEĞİŞTİRMEYİ UNUTMAAAA!!!!
 
     const self = {};
 
@@ -69,6 +69,11 @@ function mainUserListApp() {
     self.buildCSS = () => {
       const customStyle = `
               <style class="${classes.style}">
+                *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;  
+              }
               </style>
           `;
       $('head').append(customStyle);
@@ -160,7 +165,10 @@ function mainUserListApp() {
     self.deleteUser = (id) => {
       let $users = self.getFromStorage();
 
-      if (!$users) return;
+      //verilerin süresi dolmuşsa ve silme işlemi gerçekleştirmeye çalışılıyorsa verileri yenile
+      if (!$users) {
+        return self.checkAndLoadData();
+      }
 
       $users = $users.filter((item) => item.id !== id);
 
@@ -187,7 +195,6 @@ function mainUserListApp() {
         const parsed = JSON.parse(stored);
 
         if (!parsed.exp || !parsed.users) return null;
-
         if (Date.now() - parsed.exp > CACHE_DURATION) {
           localStorage.removeItem(STORAGE_KEY);
           return null;
