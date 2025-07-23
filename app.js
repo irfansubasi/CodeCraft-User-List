@@ -19,10 +19,16 @@ function mainUserListApp() {
 
     const classes = {
       style: 'userlist-style',
+      container: 'container',
+      title: 'title',
+      userList: 'user-list',
     };
 
     const selectors = {
       style: `.${classes.style}`,
+      container: `.${classes.container}`,
+      title: `.${classes.title}`,
+      userList: `.${classes.userList}`,
       appendLocation: '.ins-api-users',
     };
 
@@ -37,6 +43,7 @@ function mainUserListApp() {
 
     self.reset = () => {
       $(selectors.style).remove();
+      $(selectors.container).remove();
     };
 
     self.buildCSS = () => {
@@ -48,8 +55,13 @@ function mainUserListApp() {
     };
 
     self.buildHTML = () => {
-      const html = ``;
-      $(selectors.appendLocation).append(html);
+      const html = `
+        <div class="${classes.container}">
+            <h1 class="${classes.title}">User List</h1>
+            <div class="${classes.userList}"></div>
+        </div>
+      `;
+      $(selectors.appendLocation).prepend(html);
     };
 
     self.setEvents = () => {};
