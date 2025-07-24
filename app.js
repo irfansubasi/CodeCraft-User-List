@@ -68,14 +68,118 @@ function mainUserListApp() {
 
     self.buildCSS = () => {
       const customStyle = `
-              <style class="${classes.style}">
-                *{
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;  
-              }
-              </style>
-          `;
+      <style class="${classes.style}">
+
+
+        *{
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        ${selectors.container} {
+          max-width: 1000px;
+          margin: 40px auto;
+          padding: 36px 28px;
+          font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        ${selectors.title} {
+          text-align: center;
+          margin-bottom: 28px;
+          color: #222;
+          font-size: 2.1em;
+          letter-spacing: 1px;
+        }
+
+        ${selectors.userList} {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 18px;
+        }
+        @media (max-width: 1100px) {
+          ${selectors.userList} {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+        @media (max-width: 800px) {
+          ${selectors.userList} {
+            grid-template-columns: 1fr;
+          }
+        }
+        .${classes.userCard} {
+          background: #f8f8f8;
+          border-radius: 10px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+          padding: 20px 18px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          transition: box-shadow 0.2s;
+        }
+
+        .${classes.userCard}:hover {
+          box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+        }
+
+        .${classes.cardHeader} h2 {
+          font-size: 1.3em;
+          color: #333;
+        }
+
+        .${classes.cardBody} {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          font-size: 1em;
+        }
+
+        .${classes.cardMainInfo} p {
+          margin: 0 0 2px 0;
+          color: #444;
+          font-weight: 500;
+        }
+
+        .${classes.cardAdress} p {
+          margin: 0 0 2px 0;
+          color: #888;
+          font-size: 0.97em;
+        }
+
+        .${classes.cardFooter} {
+          display: flex;
+          justify-content: center;
+          margin-top: 10px;
+        }
+
+        .${classes.deleteBtn} {
+          background: #e74c3c;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          padding: 8px 18px;
+          cursor: pointer;
+          font-size: 1em;
+          font-weight: 500;
+          transition: background 0.2s;
+          min-width: 100px;
+          margin: 0 auto;
+        }
+
+        .${classes.deleteBtn}:hover {
+          background: #c0392b;
+        }
+
+        @media (max-width: 600px) {
+          ${selectors.container} {
+            padding: 40px;
+          }
+          .${classes.userCard} {
+            padding: 15px;
+          }
+        }
+
+      </style>`;
       $('head').append(customStyle);
     };
 
@@ -137,15 +241,16 @@ function mainUserListApp() {
         const $cardBody = $(`<div class=${classes.cardBody}>`);
 
         const $cardMainInfo = $(`<div class=${classes.cardMainInfo}>`);
-        $cardMainInfo.append(`<p>${user.username}</p>`);
-        $cardMainInfo.append(`<p>${user.email}</p>`);
+        $cardMainInfo.append(
+          `<p><strong>Username:</strong> ${user.username}</p>`
+        );
+        $cardMainInfo.append(`<p><strong>Email:</strong> ${user.email}</p>`);
         $cardBody.append($cardMainInfo);
 
         const $cardAddress = $(`<div class=${classes.cardAdress}>`);
-        $cardAddress.append(`<p>${user.address.city}</p>`);
-        $cardAddress.append(`<p>${user.address.street}</p>`);
-        $cardAddress.append(`<p>${user.address.suite}</p>`);
-        $cardAddress.append(`<p>${user.address.zipcode}</p>`);
+        $cardAddress.append(
+          `<p><strong>Address:</strong> ${user.address.city}, ${user.address.street}, ${user.address.suite}, ${user.address.zipcode}</p>`
+        );
         $cardBody.append($cardAddress);
 
         $card.append($cardBody);
