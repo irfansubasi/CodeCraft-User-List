@@ -50,7 +50,7 @@ function mainUserListApp() {
 
     const API_URL = 'https://jsonplaceholder.typicode.com/users';
     const STORAGE_KEY = 'userListData';
-    const CACHE_DURATION = 5 * 1000; //BURAYI 1 GÜNE DEĞİŞTİRMEYİ UNUTMAAAA!!!!
+    const CACHE_DURATION = 24 * 60 * 60 * 1000;
 
     const self = {};
 
