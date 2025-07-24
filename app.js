@@ -29,6 +29,7 @@ function mainUserListApp() {
       cardAdress: 'card-address',
       cardFooter: 'card-footer',
       deleteBtn: 'delete-btn',
+      errorMsg: 'userlist-error-message',
     };
 
     const selectors = {
@@ -36,13 +37,14 @@ function mainUserListApp() {
       container: `.${classes.container}`,
       title: `.${classes.title}`,
       userList: `.${classes.userList}`,
-      userCard: `.${classes.userCard}`,
-      cardHeader: `.${classes.cardHeader}`,
-      cardBody: `.${classes.cardBody},`,
-      cardMainInfo: `.${classes.cardMainInfo}`,
-      cardAdress: `.${classes.cardAdress}`,
-      cardFooter: `.${classes.cardFooter}`,
+      userCard: `${classes.userCard}`,
+      cardHeader: `${classes.cardHeader}`,
+      cardBody: `${classes.cardBody},`,
+      cardMainInfo: `${classes.cardMainInfo}`,
+      cardAdress: `${classes.cardAdress}`,
+      cardFooter: `${classes.cardFooter}`,
       deleteBtn: `.${classes.deleteBtn}`,
+      errorMsg: `.${classes.errorMsg}`,
       appendLocation: '.ins-api-users',
     };
 
@@ -77,11 +79,14 @@ function mainUserListApp() {
           box-sizing: border-box;
         }
 
+        ${selectors.appendLocation} {
+          font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
         ${selectors.container} {
           max-width: 1000px;
           margin: 40px auto;
           padding: 36px 28px;
-          font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         ${selectors.title} {
@@ -170,6 +175,22 @@ function mainUserListApp() {
           background: #c0392b;
         }
 
+        ${selectors.errorMsg} {
+          background: #ffeaea;
+          color: #c0392b;
+          padding: 16px 24px;
+          border-radius: 10px;
+          text-align: center;
+          border: 1.5px solid #e74c3c;
+          position: fixed;
+          right: 32px;
+          bottom: 32px;
+          z-index: 9999;
+          min-width: 260px;
+          max-width: 90vw;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+        }
+
         @media (max-width: 600px) {
           ${selectors.container} {
             padding: 40px;
@@ -199,8 +220,19 @@ function mainUserListApp() {
       });
     };
 
+    //hata mesajı göster
+    self.showError = (message) => {
+      $(selectors.errorMsg).remove();
+
+      const $error = $(`<div class="${classes.errorMsg}">${message}</div>`);
+
+      $(selectors.appendLocation).append($error);
+    };
+
     //localde varsa getir. yoksa apiden çek
     self.checkAndLoadData = () => {
+      $(selectors.errorMsg).remove();
+
       let users = self.getFromStorage();
       if (users) {
         self.renderList(users);
@@ -219,6 +251,9 @@ function mainUserListApp() {
           })
           .catch((err) => {
             console.error('api error: ', err);
+            self.showError(
+              'User data could not be retrieved. Please try again later.'
+            );
           });
       }
     };
@@ -257,7 +292,7 @@ function mainUserListApp() {
 
         const $cardFooter = $(`<div class=${classes.cardFooter}></div>`);
         $cardFooter.append(
-          `<button class=${classes.deleteBtn} data-id=${user.id}>Delete</button>`
+          `<button class="${classes.deleteBtn}" data-id="${user.id}">Delete</button>`
         );
         $card.append($cardFooter);
 
@@ -272,7 +307,10 @@ function mainUserListApp() {
 
       //verilerin süresi dolmuşsa ve silme işlemi gerçekleştirmeye çalışılıyorsa verileri yenile
       if (!$users) {
-        return self.checkAndLoadData();
+        self.showError('No user data found. Reloading...');
+        setTimeout(() => {
+          return self.checkAndLoadData();
+        }, 2000);
       }
 
       $users = $users.filter((item) => item.id !== id);
@@ -306,7 +344,11 @@ function mainUserListApp() {
         }
 
         return parsed.users;
-      } catch {
+      } catch (err) {
+        console.error('localStorage parse error:', err);
+        self.showError(
+          'Saved data could not be read. Please refresh the page.'
+        );
         return null;
       }
     };
